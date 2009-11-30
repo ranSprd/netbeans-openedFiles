@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Window">
+            <file name="net-sf-multikulti-openeditorfiles-OpenFilesListAction.instance">
+                <!--<attr name="SystemFileSystem.localizingBundle" stringvalue="com.smc.openeditorfiles.Bundle"/>-->
+            </file>
+        </folder>
+    </folder>
+
+  <folder name="Editors">
+       <folder name="Toolbars">
+           <folder name="Default">
+               <file name="org-openide-actions-SaveAction.instance">
+                   <attr name="position" intvalue="100"/>
+               </file>
+               <file name="SeparatorAfterSaveAllAction.instance">
+                   <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                   <attr name="position" intvalue="300"/>
+               </file>
+           </folder>
+       </folder>
+   </folder> 
+
+    <folder name="Menu">
+        <folder name="Window">
+            <folder name="Navigator">
+              <file name="net-sf-multikulti-openeditorfiles-OpenFilesListAction.shadow">
+                  <attr name="originalFile" stringvalue="Actions/Window/net-sf-multikulti-openeditorfiles-OpenFilesListAction.instance"/>
+                  <attr name="position" intvalue="1500"/>
+              </file>
+            </folder>
+            <folder name="Other">
+              <file name="net-sf-multikulti-openeditorfiles-OpenFilesListAction.shadow">
+                  <attr name="originalFile" stringvalue="Actions/Window/net-sf-multikulti-openeditorfiles-OpenFilesListAction.instance"/>
+                  <attr name="position" intvalue="1500"/>
+              </file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="OpenFilesListTopComponent.settings" url="OpenFilesListTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="navigator">
+                <file name="OpenFilesListTopComponent.wstcref" url="OpenFilesListTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>
+    
+    <folder name="OFL">
+       <folder name="Menus">
+         <folder name="Popup">
+           <folder name="content">
+                <file name="org-netbeans-core-windows-actions-CloseAllButThisAction.instance">
+                    <attr name="instanceClass" stringvalue="org.netbeans.core.windows.actions.CloseAllButThisAction"/>
+                </file>
+           </folder>
+           <folder name="sensitive">
+                <file name="org-netbeans-modules-project-ui-SelectInProjects.instance">
+                    <attr name="instanceCreate" methodvalue="org.netbeans.modules.project.ui.actions.SelectNodeAction.inProjects"/>
+                    <attr name="position" intvalue="100"/>
+                </file>
+           </folder>
+         </folder>
+       </folder>
+    </folder>
+</filesystem>
