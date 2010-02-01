@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
+        <folder name="Edit">
+            <file name="net-sf-multikulti-occurrences-MarkTextOccurrencesAction.instance">
+                <attr name="delegate" newvalue="net.sf.multikulti.occurrences.MarkTextOccurrencesAction"/>
+                <attr name="displayName" bundlevalue="net.sf.multikulti.occurrences.Bundle#CTL_MarkTextOccurrencesAction"/>
+                <attr name="iconBase" stringvalue="net/sf/multikulti/occurrences/puzzle.png"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
+        </folder>
         <folder name="Window">
             <file name="net-sf-multikulti-openeditorfiles-OpenFilesListAction.instance">
                 <!--<attr name="SystemFileSystem.localizingBundle" stringvalue="com.smc.openeditorfiles.Bundle"/>-->
@@ -14,6 +23,9 @@
            <folder name="Default">
                <file name="org-openide-actions-SaveAction.instance">
                    <attr name="position" intvalue="100"/>
+               </file>
+               <file name="net-sf-multikulti-occurrences-MarkTextOccurrencesAction.shadow">
+                   <attr name="position" intvalue="110"/>
                </file>
                <file name="SeparatorAfterSaveAllAction.instance">
                    <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>

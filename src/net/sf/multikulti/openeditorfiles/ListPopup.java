@@ -135,7 +135,7 @@ public class ListPopup extends JPopupMenu
 //      if (clickedIndex != selectedIndex)
       {
         // bring it to front 
-        service.activate(clickedIndex) ;
+        service.bringToFront(clickedIndex) ;
       }
       orgAction.actionPerformed(e) ;
     }

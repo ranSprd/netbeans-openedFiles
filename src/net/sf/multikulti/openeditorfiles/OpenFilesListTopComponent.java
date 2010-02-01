@@ -198,8 +198,8 @@ final class OpenFilesListTopComponent extends TopComponent
   }
   
   /**
-   * Allows top component to specify list of modes into which can be docked 
-   * by end user. Subclasses should override this method if they want to alter 
+   * Allows the top component to specify a ui-list (with modes) which can be docked
+   * by end user. Subclasses should override this method if they want to alter
    * docking policy of top component.
    * So for example, by returning empty list, top component refuses to be 
    * docked anywhere.
@@ -303,7 +303,7 @@ final class OpenFilesListTopComponent extends TopComponent
         if (event.getClickCount() > 1)
         {
           // bring the selected component to front
-          listener.activate( jList1.locationToIndex( event.getPoint() ) );
+          listener.bringToFront( jList1.locationToIndex( event.getPoint() ) );
         }
       }
     }

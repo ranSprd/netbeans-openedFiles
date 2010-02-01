@@ -57,7 +57,7 @@ public class BringToFrontAction extends AbstractListPopupAction
     
     public void actionPerformed(ActionEvent e)
     {
-      getService().activate( getClickedIndex() );
+      getService().bringToFront( getClickedIndex() );
     }
     
   // --------------------------------------------------------------------------

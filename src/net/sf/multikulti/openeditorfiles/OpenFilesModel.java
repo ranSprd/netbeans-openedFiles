@@ -94,6 +94,13 @@ public class OpenFilesModel extends AbstractListModel
   
   
   // ----------------------
+
+  public final void markActive(TopComponent topComp) {
+      OpenedListItem item = findItem(topComp);
+      if (item != null) {
+          item.logActive();
+      }
+  }
   
   public final void readOpenedWindows()
   {
@@ -244,6 +251,21 @@ public class OpenFilesModel extends AbstractListModel
     }
 
     return back;
+  }
+
+
+  public final OpenedListItem findItem(TopComponent topComp) {
+      if (topComp == null) {
+         return null;
+      }
+
+      for(OpenedListItem item : ofList) {
+          if (item.isEqualTopComponent(topComp)) {
+              return item;
+          }
+      }
+
+      return null;
   }
 
 }

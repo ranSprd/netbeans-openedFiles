@@ -51,6 +51,7 @@ import org.openide.windows.TopComponent;
 public class OpenedListItem 
 {
   private TopComponent topComp;
+  private long lastActive = 0;
 
   public OpenedListItem(TopComponent topComp)
   {
@@ -66,7 +67,8 @@ public class OpenedListItem
   {
     this.topComp = topComp;
   }
-  
+
+  /** check, if there is the same topcomponent */
   public final boolean isEqualTopComponent(TopComponent other)
   {
     if ((other != null) && (topComp != null))
@@ -76,9 +78,22 @@ public class OpenedListItem
     
     return false ;
   }
+
+
+  /** log activation of this component */
+  public void logActive() {
+    lastActive = System.currentTimeMillis();
+  }
+
+  /** last activation time */
+  public long getLastActive() {
+      return lastActive;
+  }
+
+
   
   /** bring the component to the front */
-  public void activate()
+  public void bringToFront()
   {
     if (topComp != null)
     {

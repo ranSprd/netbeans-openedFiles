@@ -47,7 +47,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.SwingUtilities;
+import org.openide.loaders.DataObject;
 import org.openide.util.RequestProcessor;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -62,6 +64,7 @@ public class OpenedFilesListener extends DefaultListSelectionModel
   private final ModelUpdater noGuiTask = new ModelUpdater() ;
   
   private volatile boolean updateInProgress = false ;
+  private volatile int requestCounter = 0 ;
   
   public OpenedFilesListener()
   {
@@ -74,6 +77,9 @@ public class OpenedFilesListener extends DefaultListSelectionModel
   private final void register()
   {
     WindowManager.getDefault().getRegistry().addPropertyChangeListener(this);
+
+    // DEBUG Output
+//    WindowManager.getDefault().addPropertyChangeListener( new WindowStateListener() );
   }
   
   public void propertyChange(PropertyChangeEvent evt)
@@ -92,6 +98,11 @@ public class OpenedFilesListener extends DefaultListSelectionModel
 //            System.out.println("mode :"+evt.getNewValue() ) ;
 //          }
           update() ;
+        } else if (name.equals( TopComponent.Registry.PROP_ACTIVATED)) {
+            final Object sender = evt.getNewValue();
+            if (sender instanceof TopComponent) {
+                model.markActive( (TopComponent) sender);
+            }
         }
       }
     }
@@ -118,6 +129,10 @@ public class OpenedFilesListener extends DefaultListSelectionModel
       
       // run a task for updating the model and compute some other stuff....
       RequestProcessor.getDefault().post( noGuiTask ) ;
+    }
+    else
+    {
+      requestCounter++ ;
     }
   }
   
@@ -161,15 +176,15 @@ public class OpenedFilesListener extends DefaultListSelectionModel
     return false ;
   }
   
-  /** active the TopComponent at list index <index> */
-  public final void activate( int index)
+  /** active the TopComponent at list index <index> (bring to front) */
+  public final void bringToFront( int index)
   {
     if (index >= 0)
     {
       OpenedListItem item = model.getItem(index) ;
       if (item != null)
       {
-        item.activate(); 
+        item.bringToFront();
       }
     }
   }
@@ -204,13 +219,23 @@ public class OpenedFilesListener extends DefaultListSelectionModel
     
     public final void run()
     {
-      model.fireUpdate() ;
-      clearSelection();
-      for(UpdateListener listener : listenerList)
+      if (requestCounter < 1)
       {
-        listener.updateFinished();
+        model.fireUpdate() ;
+        clearSelection();
+        for(UpdateListener listener : listenerList)
+        {
+          listener.updateFinished();
+        }
+        updateInProgress = false ;
+        requestCounter = 0 ;
       }
-      updateInProgress = false ;
+      else
+      {
+        updateInProgress = false ;
+        requestCounter = 0 ;
+        update() ;
+      }
     }
   }
   
@@ -234,6 +259,37 @@ public class OpenedFilesListener extends DefaultListSelectionModel
        e.printStackTrace();
      }
     }
+  }
+  // -------------------------------------------------------------------------
+
+  // DEBUG Version
+  private class WindowStateListener implements PropertyChangeListener
+  {
+
+    public void propertyChange(PropertyChangeEvent evt)
+    {
+      System.out.println("[" + getClass() + "] " +evt.getPropertyName()
+              + " from <" +evt.getSource() +">"
+              );
+
+      Object sender = evt.getNewValue() ; //evt.getSource() ;
+      if (sender instanceof Mode)
+      {
+        Mode mode = (Mode) sender ;
+        TopComponent tc = mode.getSelectedTopComponent() ;
+        if (tc != null)
+        {
+          DataObject dObj = tc.getLookup().lookup(DataObject.class) ;
+          System.out.println("[" + getClass() + "] dataobject is <"
+                  +dObj +">");
+        }
+      }
+      else
+      {
+        System.out.println("[" + getClass() + "] no topcomponent <" +sender +">");
+      }
+    }
+    
   }
   
 
