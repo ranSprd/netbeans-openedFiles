@@ -24,7 +24,7 @@
                <file name="org-openide-actions-SaveAction.instance">
                    <attr name="position" intvalue="100"/>
                </file>
-               <file name="net-sf-multikulti-occurrences-MarkTextOccurrencesAction.shadow">
+               <file name="net-sf-multikulti-occurrences-MarkTextOccurrencesAction.instance">
                    <attr name="position" intvalue="110"/>
                </file>
                <file name="SeparatorAfterSaveAllAction.instance">

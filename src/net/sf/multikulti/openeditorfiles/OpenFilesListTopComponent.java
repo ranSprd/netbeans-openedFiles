@@ -208,6 +208,7 @@ final class OpenFilesListTopComponent extends TopComponent
    * @param modes
    * @return
    */
+    @Override
   public List<Mode> availableModes(List<Mode> modes)
   {
     if (modes != null)
@@ -252,7 +253,7 @@ final class OpenFilesListTopComponent extends TopComponent
     jList1.setEnabled(true);
   }
   
-  private final void createPopup()
+  private void createPopup()
   {
     popup = new ListPopup(listener, OpenFilesListTopComponent.this) ;
     //try

@@ -25,99 +25,91 @@ import org.openide.ErrorManager;
 import org.openide.cookies.EditorCookie;
 import org.openide.loaders.DataObject;
 import org.openide.util.RequestProcessor;
+
 /**
  * 
  */
-public class MarkTextOccurrences implements CaretListener
-{
+public class MarkTextOccurrences {
 
-  private static final AttributeSet defaultColors =
-          AttributesUtilities.createImmutable(StyleConstants.Background,
-                                              new Color(236, 235, 163));
-  private final OffsetsBag bag;
-  private JTextComponent comp;
-  private final WeakReference weakDoc;
+    private static final AttributeSet defaultColors =
+            AttributesUtilities.createImmutable(StyleConstants.Background,
+            new Color(236, 235, 163));
 
-  public MarkTextOccurrences(Document doc)
-  {
-    bag = new OffsetsBag(doc);
-    weakDoc = new WeakReference<Document>(doc);
-    DataObject dobj = NbEditorUtilities.getDataObject((Document) weakDoc.get() );
-    if (dobj != null)
-    {
-      EditorCookie pane = dobj.getCookie(EditorCookie.class);
-      JEditorPane[] panes = pane.getOpenedPanes();
-      if (panes != null && panes.length > 0)
-      {
-        comp = panes[0];
-        comp.addCaretListener(this);
-      }
-    }
-  }
+    private final OffsetsBag bag;
 
-  @Override
-  public void caretUpdate(CaretEvent e)
-  {
-    // is there a selection?
-    int diff = e.getDot() - e.getMark() ;
-    if (diff != 0)
-    {
-      // delete a prev highlighting
-      bag.clear();
+    private JTextComponent comp;
 
-      diff = Math.abs(diff) ;
-      if (diff > 3)
-      {
-        scheduleUpdate();
-      }
-    }
-  }
-  private RequestProcessor.Task task = null;
-  private final static int DELAY = 100;
+    private final WeakReference weakDoc;
 
-  public void scheduleUpdate()
-  {
-    if (task == null)
-    {
-      task = RequestProcessor.getDefault().create(new Runnable()
-      {
-
-        public void run()
-        {
-          String selection = comp.getSelectedText();
-          if (selection != null)
-          {
-            if (selection.length() > 3)
-            {
-              selection = selection.replaceAll("\\[", " ") ;
-              selection = selection.replaceAll("\\]", " ") ;
-              try
-              {
-                Pattern p = Pattern.compile(selection);
-                Matcher m = p.matcher(comp.getText());
-                while (m.find() == true)
-                {
-                  int startOffset = m.start();
-                  int endOffset = m.end();
-                  bag.addHighlight(startOffset, endOffset, defaultColors);
-                }
-              }
-              catch (Exception ex)
-              {
-                ErrorManager.getDefault().log(ErrorManager.INFORMATIONAL, ex.getMessage()) ;
-              }
+    public MarkTextOccurrences(Document doc) {
+        bag = new OffsetsBag(doc);
+        weakDoc = new WeakReference<Document>(doc);
+        DataObject dobj = NbEditorUtilities.getDataObject((Document) weakDoc.get());
+        if (dobj != null) {
+            EditorCookie pane = dobj.getCookie(EditorCookie.class);
+            JEditorPane[] panes = pane.getOpenedPanes();
+            if (panes != null && panes.length > 0) {
+                comp = panes[0];
+                comp.addCaretListener( new CaretUpdateListener());
             }
-          }
         }
-      }, true);
-      task.setPriority(Thread.MIN_PRIORITY);
     }
-    task.cancel();
-    task.schedule(DELAY);
-  }
 
-  public OffsetsBag getHighlightsBag()
-  {
-    return bag;
-  }
+    private RequestProcessor.Task task = null;
+
+    private final static int DELAY = 100;
+
+    public void scheduleUpdate() {
+        if (task == null) {
+            task = RequestProcessor.getDefault().create(new Runnable() {
+
+                public void run() {
+                    String selection = comp.getSelectedText();
+                    if (selection != null) {
+                        if (selection.length() > 3) {
+                            selection = selection.replaceAll("\\[", " ");
+                            selection = selection.replaceAll("\\]", " ");
+                            try {
+                                Pattern p = Pattern.compile(selection);
+                                Matcher m = p.matcher(comp.getText());
+                                while (m.find() == true) {
+                                    int startOffset = m.start();
+                                    int endOffset = m.end();
+                                    bag.addHighlight(startOffset, endOffset, defaultColors);
+                                }
+                            } catch (Exception ex) {
+                                ErrorManager.getDefault().log(ErrorManager.INFORMATIONAL, ex.
+                                        getMessage());
+                            }
+                        }
+                    }
+                }
+            }, true);
+            task.setPriority(Thread.MIN_PRIORITY);
+        }
+        task.cancel();
+        task.schedule(DELAY);
+    }
+
+    public OffsetsBag getHighlightsBag() {
+        return bag;
+    }
+
+    private class CaretUpdateListener implements CaretListener {
+
+        @Override
+        public void caretUpdate(CaretEvent e) {
+            // is there a selection?
+            int diff = e.getDot() - e.getMark();
+            if (diff != 0) {
+                // delete a prev highlighting
+                bag.clear();
+
+                diff = Math.abs(diff);
+                if (diff > 3) {
+                    scheduleUpdate();
+                }
+            }
+        }
+    }
 }
