@@ -48,10 +48,12 @@ import org.openide.windows.TopComponent;
 /**
  * bla
  */
-public class OpenedListItem 
+public class OpenedListItem implements Comparable
 {
   private TopComponent topComp;
   private long lastActive = 0;
+  private boolean allowClose = true;
+  private boolean valid = true;
 
   public OpenedListItem(TopComponent topComp)
   {
@@ -113,5 +115,31 @@ public class OpenedListItem
     
     return false ;
   }
+
+    public boolean isAllowClose() {
+        return allowClose;
+    }
+
+    public void setAllowClose(boolean allowClose) {
+        this.allowClose = allowClose;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    public int compareTo(Object o) {
+        if (o == null) {
+            return 1;
+        } else if (o instanceof OpenedListItem) {
+            return (int) ( ((OpenedListItem) o).lastActive - lastActive);
+        }
+
+        return 1;
+    }
 
 }

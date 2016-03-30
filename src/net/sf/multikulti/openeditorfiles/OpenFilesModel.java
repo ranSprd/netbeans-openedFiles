@@ -31,7 +31,6 @@
  * Contributor(s):
  * 
  */
-
 // created by : R.Nagel <kiar@users.sourceforge.net>, 07.03.2008
 //
 // function   : model, contains the TopCompoment's
@@ -39,10 +38,11 @@
 // todo       :
 //
 // modified   : 
-
 package net.sf.multikulti.openeditorfiles;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractListModel;
 import org.openide.windows.Mode;
@@ -52,125 +52,140 @@ import org.openide.windows.WindowManager;
 /**
  * Contains the ListModel
  */
-public class OpenFilesModel extends AbstractListModel
-{
-  private ArrayList<OpenedListItem> preList = new ArrayList<OpenedListItem>();
-  private ArrayList<OpenedListItem> ofList = new ArrayList<OpenedListItem>();
-  
-  private Mode editorMode = null ;
-  
-  public final Mode findEditorMode()
-  {
-    try
-    {
-      // get a set of all available modes
-      Set<? extends Mode> modes = WindowManager.getDefault().getModes();
+public class OpenFilesModel extends AbstractListModel {
 
-      // make it robust
-      if (modes != null)
-      {
-        for( Mode mode : modes)
-        {
-          if (mode != null)
-          {
-            String dummy = mode.getName();
-            if (dummy != null)
-            {
-              // we need only the <editor> mode
-              if ("editor".equals(dummy))
-              {
-                return editorMode = mode ;
-              }
+    // a pre-computed list of open windows
+    private ArrayList<TopComponent> preList = new ArrayList<TopComponent>();
+
+    // the list which is used for the view
+    private ArrayList<OpenedListItem> modelList = new ArrayList<OpenedListItem>();
+
+    private ArrayList<OpenedListItem> closeableList = new ArrayList<OpenedListItem>();
+
+    private Mode editorMode = null;
+
+    public final Mode findEditorMode() {
+        try {
+            // get a set of all available modes
+            Set<? extends Mode> modes = WindowManager.getDefault().getModes();
+
+            // make it robust
+            if (modes != null) {
+                for (Mode mode : modes) {
+                    if (mode != null) {
+                        String dummy = mode.getName();
+                        if (dummy != null) {
+                            // we need only the <editor> mode
+                            if ("editor".equals(dummy)) {
+                                return editorMode = mode;
+                            }
+                        }
+                    }
+                }
             }
-          }
-        }
-      }
-    }
-    catch (Exception e)  // if any error occurs, throws null
-    {
-    }
-    return editorMode = null ;
-  }
-  
-  
-  // ----------------------
-
-  public final void markActive(TopComponent topComp) {
-      OpenedListItem item = findItem(topComp);
-      if (item != null) {
-          item.logActive();
-      }
-  }
-  
-  public final void readOpenedWindows()
-  {
-    try
-    {
-      preList.clear();
-
-      if ( editorMode != null)
-      {
-        TopComponent comps[] = editorMode.getTopComponents() ;
-
-        if (comps != null)
+        } catch (Exception e) // if any error occurs, throws null
         {
-          for (TopComponent single : comps)
-          {
-            if (single != null)
-            {
-              if (single.isOpened())
-              {
-                preList.add(new OpenedListItem(single));
-              }
-            }
-          }
         }
-      }
+        return editorMode = null;
     }
-    catch (Exception e)
-    {
-      System.out.println(e) ;
-      e.printStackTrace();
-    }
-  }
-  
-  /** import the preList and make it to model */
-  public final void updateModel()
-  {
-    ofList.clear(); 
-    for( OpenedListItem item : preList)
-    {
-      ofList.add(item);
-      
-      // do some other NO AWT stuff here
-    }
-  }
-  
-  public final TopComponent getSelectedTopComponent()
-  {
-    if (editorMode == null)
-    {
-      editorMode = findEditorMode() ;
-    }
-    
-    if (editorMode != null)
-    {
-      return editorMode.getSelectedTopComponent() ;
-    }
-    
-    return null ;
-    
-  }
-  
-  public final void fireUpdate()
-  {
-    this.fireIntervalAdded(this, 0, ofList.size());
-  }
 
-  public int getSize()
-  {
-    return ofList.size();
-  }
+    // ----------------------
+    public final void markActive(TopComponent topComp) {
+        OpenedListItem item = findItem(topComp);
+        if (item != null) {
+            item.logActive();
+        }
+    }
+
+    public final void readOpenedWindows() {
+        try {
+            preList.clear();
+
+            if (editorMode != null) {
+                TopComponent comps[] = editorMode.getTopComponents();
+
+                if (comps != null) {
+                    for (TopComponent single : comps) {
+                        if (single != null) {
+                            if (single.isOpened()) {
+                                preList.add(single);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * import the preList and make it to the model
+     */
+    public final void updateModel() {
+
+//        //invalidate all items
+//        for(OpenedListItem item : modelList) {
+//            item.setValid(false);
+//        }
+        // prepare the current open items
+        ArrayList<OpenedListItem> tempList = new ArrayList<OpenedListItem>();
+        for (TopComponent component : preList) {
+            OpenedListItem item = findItem(component);
+
+            // new: create a new Item and log its activity
+            if (item == null) {
+                item = new OpenedListItem(component);
+                item.logActive();
+            }
+            item.setValid(true);
+            tempList.add(item);
+        }
+
+        // sort by usage 
+        Collections.sort(tempList);
+
+        int mostActive = tempList.size();
+        if (mostActive > 25) {
+            mostActive = 25;
+        }
+
+        // add the first (most active) x items into the current model
+        modelList.clear();
+        for (int t = 0; t < mostActive; t++) {
+            modelList.add(tempList.get(t));
+        }
+
+        // refresh the list of closeable components 
+        closeableList.clear();
+        for (int t = mostActive, len = tempList.size(); t < len; t++) {
+            closeableList.add(tempList.get(t));
+        }
+
+        // do some other NO AWT stuff here
+    }
+
+    public final TopComponent getSelectedTopComponent() {
+        if (editorMode == null) {
+            editorMode = findEditorMode();
+        }
+
+        if (editorMode != null) {
+            return editorMode.getSelectedTopComponent();
+        }
+
+        return null;
+
+    }
+
+    public final void fireUpdate() {
+        this.fireIntervalAdded(this, 0, modelList.size());
+    }
+
+    public int getSize() {
+        return modelList.size();
+    }
 
 //  use this methode, if a renderer is installed  
 //  public Object getElementAt(int index) throws IndexOutOfBoundsException
@@ -191,85 +206,72 @@ public class OpenFilesModel extends AbstractListModel
 //
 //    return back;
 //  }
-  
-  // no custom renderer method
-  public Object getElementAt(int index) throws IndexOutOfBoundsException
-  {
-    String back = "<error>";
-    try
-    {
-      OpenedListItem item = ofList.get(index);
-      if (item != null)
-      {
-        TopComponent topComp = item.getTopComponent() ;
-        if (topComp != null)
-        {
-          back = topComp.getHtmlDisplayName();
-          if (back == null)
-          {
-            back = topComp.getDisplayName();
-            if (back == null)
-            {
-              back = topComp.getName();
-              if (back == null)
-              {
-                back = "unresolved [" + topComp.toString() + "]";
-              }
-            }
-          }
-        }
+    // no custom renderer method
+    public Object getElementAt(int index) throws IndexOutOfBoundsException {
+        String back = "<error>";
+        try {
+            OpenedListItem item = modelList.get(index);
+            if (item != null) {
+                TopComponent topComp = item.getTopComponent();
+                if (topComp != null) {
+                    back = topComp.getHtmlDisplayName();
+                    if (back == null) {
+                        back = topComp.getDisplayName();
+                        if (back == null) {
+                            back = topComp.getName();
+                            if (back == null) {
+                                back = "unresolved [" + topComp.toString() + "]";
+                            }
+                        }
+                    }
+                }
 //        else
 //        {
 //          back = "unresolved" ;
 //        }
-      }
-    }
-    catch (Exception e)
-    {
+            }
+        } catch (Exception e) {
+        }
 
-    }
-
-    return back;
-  }
-  
-
-  /** returns the Listitem at ofList index <index> or null if 
-   *  something is wrong... */
-  public OpenedListItem getItem(int index)
-  {
-    OpenedListItem back = null;
-    if (index >= 0)
-    {
-      try
-      {
-        back = ofList.get(index);
-      }
-      catch (Exception e)
-      {
-        back = null ;
-      }
+        return back;
     }
 
-    return back;
-  }
+    /**
+     * returns the Listitem at ofList index <index> or null if something is
+     * wrong...
+     */
+    public OpenedListItem getItem(int index) {
+        OpenedListItem back = null;
+        if (index >= 0) {
+            try {
+                back = modelList.get(index);
+            } catch (Exception e) {
+                back = null;
+            }
+        }
 
+        return back;
+    }
 
-  public final OpenedListItem findItem(TopComponent topComp) {
-      if (topComp == null) {
-         return null;
-      }
+    public final OpenedListItem findItem(TopComponent topComp) {
+        if (topComp == null) {
+            return null;
+        }
 
-      for(OpenedListItem item : ofList) {
-          if (item.isEqualTopComponent(topComp)) {
-              return item;
-          }
-      }
+        for (OpenedListItem item : modelList) {
+            if (item.isEqualTopComponent(topComp)) {
+                return item;
+            }
+        }
 
-      return null;
-  }
+        return null;
+    }
+
+    public List<OpenedListItem> getCloseableList() {
+        return closeableList;
+    }
 
 }
-
 //  some code examples
 //
 //
