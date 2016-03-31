@@ -147,8 +147,8 @@ public class OpenFilesModel extends AbstractListModel {
         Collections.sort(tempList);
 
         int mostActive = tempList.size();
-        if (mostActive > 25) {
-            mostActive = 25;
+        if (mostActive > 500) {
+            mostActive = 500;
         }
 
         // add the first (most active) x items into the current model
