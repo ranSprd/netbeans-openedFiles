@@ -32,70 +32,50 @@
  * 
  */
 
-// name       : AbstractListPopupAction.java
-//
 // created by : R.Nagel <kiar@users.sourceforge.net>, 07.03.2008
 //
-// function   : base action for the OpenedList popupmenu
+// function   : Popupmenu action, activates the selected (clicked) file
 //
 // todo       :
 //
 // modified   : 
 
-package net.sf.multikulti.openeditorfiles.actions;
+package net.sf.openedfiles.actions;
 
-import javax.swing.AbstractAction;
-import javax.swing.Icon;
-import javax.swing.event.PopupMenuListener;
-import net.sf.multikulti.openeditorfiles.ListPopup;
-import net.sf.multikulti.openeditorfiles.OpenedFilesListener;
+import java.awt.event.ActionEvent;
+import javax.swing.event.PopupMenuEvent;
 
 /**
- * an action for the ListPopup
+ * 
  */
-public abstract class AbstractListPopupAction extends AbstractAction implements
-        PopupMenuListener
+public class BringToFrontAction extends AbstractListPopupAction
 {
-  private ListPopup popupParent = null;
-
-  public AbstractListPopupAction(String name, Icon icon)
-  {
-    super(name, icon);
-  }
-
-  public AbstractListPopupAction(String name)
-  {
-    super(name);
-  }
-
-  public AbstractListPopupAction()
-  {
-    super();
-  }
-  
-  /** register the popup and add this action into the view */
-  public void register(ListPopup popup)
-  {
-    if (popup != null)
+    public BringToFrontAction()
     {
-      popupParent = popup;
-      popupParent.add(this);
-      popupParent.addPopupMenuListener(this);
+      super( "Bring to Front" ) ;
     }
-  }
-  
-  public int getSelectedIndex()
+    
+    public void actionPerformed(ActionEvent e)
+    {
+      getService().bringToFront( getClickedIndex() );
+    }
+    
+  // --------------------------------------------------------------------------
+  // PopupMenuListener
+  // --------------------------------------------------------------------------
+    
+  public void popupMenuWillBecomeVisible(PopupMenuEvent e)
   {
-    return popupParent.getSelectedIndex();
+    setEnabled( !getService().isActivated( getClickedIndex()) );
   }
 
-  public int getClickedIndex()
+  public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
   {
-    return popupParent.getClickedIndex();
+//    throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  public OpenedFilesListener getService()
+  public void popupMenuCanceled(PopupMenuEvent e)
   {
-    return popupParent.getService();
+//    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

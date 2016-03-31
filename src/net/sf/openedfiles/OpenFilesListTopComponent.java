@@ -41,10 +41,10 @@
 //
 // modified   : 
 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles;
 
-import net.sf.multikulti.openeditorfiles.actions.AbstractListPopupAction;
-import net.sf.multikulti.openeditorfiles.actions.BringToFrontAction;
+import net.sf.openedfiles.actions.AbstractListPopupAction;
+import net.sf.openedfiles.actions.BringToFrontAction;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

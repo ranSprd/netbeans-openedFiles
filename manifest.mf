@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-OpenIDE-Module: net.sf.multikulti
-OpenIDE-Module-Layer: net/sf/multikulti/layer.xml
-OpenIDE-Module-Localizing-Bundle: net/sf/multikulti/Bundle.properties
+OpenIDE-Module: net.sf
+OpenIDE-Module-Layer: net/sf/layer.xml
+OpenIDE-Module-Localizing-Bundle: net/sf/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0.1
 

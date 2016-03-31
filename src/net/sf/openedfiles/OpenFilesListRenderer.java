@@ -41,7 +41,7 @@
 // modified   : 
 
 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles;
 
 import java.awt.Component;
 import javax.swing.ImageIcon;
