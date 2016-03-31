@@ -1,3 +1,2 @@
-# netbeans-multi-plugin
-
-shows open editor tabs in a dedicated view 
+# netbeans-openedFiles
+shows open editor tabs in a dedicated view in netbeans.
