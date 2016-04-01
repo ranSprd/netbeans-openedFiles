@@ -12,7 +12,7 @@
             </file>
         </folder>-->
         <folder name="Window">
-            <file name="net-sf-openedfiles-openeditorfiles-OpenFilesListAction.instance">
+            <file name="net-sf-openedfiles-OpenFilesListAction.instance">
             </file>
         </folder>
     </folder>
@@ -33,13 +33,13 @@
 
     <folder name="Menu">
         <folder name="Window">
-            <file name="net-sf-openedfiles-openeditorfiles-OpenFilesListAction.shadow">
-                <attr name="originalFile" stringvalue="Actions/Window/net-sf-openedfiles-openeditorfiles-OpenFilesListAction.instance"/>
+            <file name="net-sf-openedfiles-OpenFilesListAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Window/net-sf-openedfiles-OpenFilesListAction.instance"/>
                 <attr name="position" intvalue="1500"/>
             </file>
         </folder>
     </folder>
-    <folder name="Windows2">
+<!--    <folder name="Windows2">
         <folder name="Components">
             <file name="OpenFilesListTopComponent.settings" url="OpenFilesListTopComponentSettings.xml"/>
         </folder>
@@ -48,7 +48,7 @@
                 <file name="OpenFilesListTopComponent.wstcref" url="OpenFilesListTopComponentWstcref.xml"/>
             </folder>
         </folder>
-    </folder>
+    </folder>-->
     
     <folder name="OFL">
         <folder name="Menus">
