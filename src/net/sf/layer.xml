@@ -31,14 +31,14 @@
         </folder>
     </folder> 
 
-    <folder name="Menu">
+<!--    <folder name="Menu">
         <folder name="Window">
             <file name="net-sf-openedfiles-OpenFilesListAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/net-sf-openedfiles-OpenFilesListAction.instance"/>
                 <attr name="position" intvalue="1500"/>
             </file>
         </folder>
-    </folder>
+    </folder>-->
 <!--    <folder name="Windows2">
         <folder name="Components">
             <file name="OpenFilesListTopComponent.settings" url="OpenFilesListTopComponentSettings.xml"/>
