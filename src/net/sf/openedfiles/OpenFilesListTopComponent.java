@@ -63,7 +63,7 @@ import org.openide.windows.Mode;
  */
 @TopComponent.Description(
         preferredID = "OpenFilesListTopComponent",
-        iconBase="net/sf/resource/windowlist16.png"
+        iconBase="resource/windowlist16.png"
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "net.sf.openedfiles.testerTopComponent")
