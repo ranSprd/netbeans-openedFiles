@@ -38,7 +38,7 @@
 // todo       :
 //
 // modified   : 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,11 +124,6 @@ public class OpenFilesModel extends AbstractListModel {
      * import the preList and make it to the model
      */
     public final void updateModel() {
-
-//        //invalidate all items
-//        for(OpenedListItem item : modelList) {
-//            item.setValid(false);
-//        }
         // prepare the current open items
         ArrayList<OpenedListItem> tempList = new ArrayList<OpenedListItem>();
         for (TopComponent component : preList) {
@@ -147,8 +142,8 @@ public class OpenFilesModel extends AbstractListModel {
         Collections.sort(tempList);
 
         int mostActive = tempList.size();
-        if (mostActive > 25) {
-            mostActive = 25;
+        if (mostActive > 500) {
+            mostActive = 500;
         }
 
         // add the first (most active) x items into the current model
@@ -187,25 +182,6 @@ public class OpenFilesModel extends AbstractListModel {
         return modelList.size();
     }
 
-//  use this methode, if a renderer is installed  
-//  public Object getElementAt(int index) throws IndexOutOfBoundsException
-//  {
-//    String back = "<error>";
-//    try
-//    {
-//      OpenedListItem item = ofList.get(index);
-//      if (item != null)
-//      {
-//        return item.topComp ;
-//      }
-//    }
-//    catch (Exception e)
-//    {
-//
-//    }
-//
-//    return back;
-//  }
     // no custom renderer method
     public Object getElementAt(int index) throws IndexOutOfBoundsException {
         String back = "<error>";
@@ -225,10 +201,6 @@ public class OpenFilesModel extends AbstractListModel {
                         }
                     }
                 }
-//        else
-//        {
-//          back = "unresolved" ;
-//        }
             }
         } catch (Exception e) {
         }
@@ -270,74 +242,4 @@ public class OpenFilesModel extends AbstractListModel {
     public List<OpenedListItem> getCloseableList() {
         return closeableList;
     }
-
 }
-//  some code examples
-//
-//
-//      jTextArea1.setText( clickCounter +"\n") ;
-//      
-//      Set<? extends TopComponent> opened = WindowManager.getDefault().getRegistry().getOpened() ;
-//      if (opened != null)
-//      {
-//        for( TopComponent single : opened)
-//        {
-//                if (single != null)
-//                {
-//                  jTextArea1.append("Component [" +single.getName() +"]\n") ;
-//                }
-//                else
-//                {
-//                  jTextArea1.append(" leer2\n") ;
-//                }
-//        }
-//      }
-//      else
-//      {
-//        jTextArea1.append("Nichts offenes gefunden!\n");
-//      }
-//      
-//      jTextArea1.append("----------------------\n") ;
-//      
-//      Set<? extends Mode> modes = WindowManager.getDefault().getModes() ;
-//      if (modes != null)
-//      {
-//        for(Mode mode : modes)
-//        {
-//          if (mode != null)
-//          {
-//            jTextArea1.append("Mode [" +mode.getName() +"]\n") ;
-//          
-//            TopComponent comps[] = mode.getTopComponents() ;
-//            if (comps != null)
-//            {
-//              jTextArea1.append(" found " +comps.length +"\n") ;
-//              
-//              for( TopComponent single : comps )
-//              {
-//                if (single != null)
-//                {
-//                  jTextArea1.append(" - Component [" +single.getName() +"]\n") ;
-//                }
-//                else
-//                {
-//                  jTextArea1.append(" - leer2!!\n") ;
-//                }
-//              }
-//            }
-//            else
-//            {
-//              jTextArea1.append(" leer\n") ;
-//            }
-//          }
-//          else
-//          {
-//            jTextArea1.setText("leerer Mode\n") ;
-//          }
-//        }
-//      }
-//      else
-//      {
-//        jTextArea1.setText("kein Mode gefunden!\n");
-//      }
-

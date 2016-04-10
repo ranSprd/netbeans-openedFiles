@@ -32,40 +32,70 @@
  * 
  */
 
+// name       : AbstractListPopupAction.java
+//
 // created by : R.Nagel <kiar@users.sourceforge.net>, 07.03.2008
 //
-// function   : netbeans main action for the module (activates the window)
+// function   : base action for the OpenedList popupmenu
 //
 // todo       :
 //
 // modified   : 
 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles.actions;
 
-import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import org.openide.util.ImageUtilities;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
+import javax.swing.Icon;
+import javax.swing.event.PopupMenuListener;
+import net.sf.openedfiles.ListPopup;
+import net.sf.openedfiles.OpenedFilesListener;
 
 /**
- * Action which shows OpenFilesList component.
+ * an action for the ListPopup
  */
-public class OpenFilesListAction extends AbstractAction
+public abstract class AbstractListPopupAction extends AbstractAction implements
+        PopupMenuListener
 {
+  private ListPopup popupParent = null;
 
-  public OpenFilesListAction()
+  public AbstractListPopupAction(String name, Icon icon)
   {
-    super(NbBundle.getMessage(OpenFilesListAction.class, "CTL_OpenFilesListAction"));
-    putValue(SMALL_ICON, new ImageIcon(ImageUtilities.loadImage(OpenFilesListTopComponent.ICON_PATH, true)));
-    putValue(LARGE_ICON_KEY, new ImageIcon(ImageUtilities.loadImage(OpenFilesListTopComponent.LARGE_ICON_PATH, true)));
+    super(name, icon);
   }
 
-  public void actionPerformed(ActionEvent evt)
+  public AbstractListPopupAction(String name)
   {
-    TopComponent win = OpenFilesListTopComponent.findInstance();
-    win.open();
-    win.requestActive();
+    super(name);
+  }
+
+  public AbstractListPopupAction()
+  {
+    super();
+  }
+  
+  /** register the popup and add this action into the view */
+  public void register(ListPopup popup)
+  {
+    if (popup != null)
+    {
+      popupParent = popup;
+      popupParent.add(this);
+      popupParent.addPopupMenuListener(this);
+    }
+  }
+  
+  public int getSelectedIndex()
+  {
+    return popupParent.getSelectedIndex();
+  }
+
+  public int getClickedIndex()
+  {
+    return popupParent.getClickedIndex();
+  }
+
+  public OpenedFilesListener getService()
+  {
+    return popupParent.getService();
   }
 }

@@ -40,7 +40,7 @@
 //
 // modified   : 
 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles;
 
 /**
  *

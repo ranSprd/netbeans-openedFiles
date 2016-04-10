@@ -34,48 +34,38 @@
 
 // created by : R.Nagel <kiar@users.sourceforge.net>, 07.03.2008
 //
-// function   : Popupmenu action, activates the selected (clicked) file
+// function   : netbeans main action for the module (activates the window)
 //
 // todo       :
 //
 // modified   : 
 
-package net.sf.multikulti.openeditorfiles.actions;
+package net.sf.openedfiles;
 
 import java.awt.event.ActionEvent;
-import javax.swing.event.PopupMenuEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
+import org.openide.windows.TopComponent;
 
 /**
- * 
+ * Action which shows OpenFilesList component.
  */
-public class BringToFrontAction extends AbstractListPopupAction
+public class OpenFilesListAction extends AbstractAction
 {
-    public BringToFrontAction()
-    {
-      super( "Bring to Front" ) ;
-    }
-    
-    public void actionPerformed(ActionEvent e)
-    {
-      getService().bringToFront( getClickedIndex() );
-    }
-    
-  // --------------------------------------------------------------------------
-  // PopupMenuListener
-  // --------------------------------------------------------------------------
-    
-  public void popupMenuWillBecomeVisible(PopupMenuEvent e)
+
+  public OpenFilesListAction()
   {
-    setEnabled( !getService().isActivated( getClickedIndex()) );
+    super(NbBundle.getMessage(OpenFilesListAction.class, "CTL_OpenFilesListAction"));
+    putValue(SMALL_ICON, new ImageIcon(ImageUtilities.loadImage(OpenFilesListTopComponent.ICON_PATH, true)));
+    putValue(LARGE_ICON_KEY, new ImageIcon(ImageUtilities.loadImage(OpenFilesListTopComponent.LARGE_ICON_PATH, true)));
   }
 
-  public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
+  public void actionPerformed(ActionEvent evt)
   {
-//    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  public void popupMenuCanceled(PopupMenuEvent e)
-  {
-//    throw new UnsupportedOperationException("Not supported yet.");
+    TopComponent win = OpenFilesListTopComponent.findInstance();
+    win.open();
+    win.requestActive();
   }
 }

@@ -38,7 +38,7 @@
 // todo       :
 //
 // modified   : 
-package net.sf.multikulti.openeditorfiles;
+package net.sf.openedfiles;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
