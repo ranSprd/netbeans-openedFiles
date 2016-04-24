@@ -42,6 +42,7 @@ package net.sf.openedfiles;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractListModel;
@@ -52,17 +53,10 @@ import org.openide.windows.WindowManager;
 /**
  * Contains the ListModel
  */
-public class OpenFilesModel extends AbstractListModel {
-
-    // a pre-computed list of open windows
-    private ArrayList<TopComponent> preList = new ArrayList<TopComponent>();
+public class OpenFilesModel {
 
     // the list which is used for the view
-    private ArrayList<OpenedListItem> modelList = new ArrayList<OpenedListItem>();
-
-    private ArrayList<OpenedListItem> closeableList = new ArrayList<OpenedListItem>();
-
-    private Mode editorMode = null;
+    private ArrayList<OpenedListItem> modelList = new ArrayList<>();
 
     public final Mode findEditorMode() {
         try {
@@ -77,7 +71,7 @@ public class OpenFilesModel extends AbstractListModel {
                         if (dummy != null) {
                             // we need only the <editor> mode
                             if ("editor".equals(dummy)) {
-                                return editorMode = mode;
+                                return mode;
                             }
                         }
                     }
@@ -86,30 +80,37 @@ public class OpenFilesModel extends AbstractListModel {
         } catch (Exception e) // if any error occurs, throws null
         {
         }
-        return editorMode = null;
+        return null;
+    }
+
+    public List<TopComponent> getTCs() {
+        List<TopComponent> result = new ArrayList<TopComponent>();
+        for (OpenedListItem item : modelList) {
+            result.add(item.getTopComponent());
+        }
+
+        return result;
     }
 
     // ----------------------
-    public final void markActive(TopComponent topComp) {
+    public final void logActivation(TopComponent topComp) {
         OpenedListItem item = findItem(topComp);
         if (item != null) {
-            item.logActive();
+            item.logActivation();
         }
     }
 
-    public final void readOpenedWindows() {
+    public final List<TopComponent> readOpenedWindows() {
+        List<TopComponent> result = new ArrayList<TopComponent>();
+        Mode editorMode = findEditorMode();
         try {
-            preList.clear();
-
             if (editorMode != null) {
                 TopComponent comps[] = editorMode.getTopComponents();
 
                 if (comps != null) {
                     for (TopComponent single : comps) {
-                        if (single != null) {
-                            if (single.isOpened()) {
-                                preList.add(single);
-                            }
+                        if (single != null && single.isOpened()) {
+                            result.add(single);
                         }
                     }
                 }
@@ -118,111 +119,45 @@ public class OpenFilesModel extends AbstractListModel {
             System.out.println(e);
             e.printStackTrace();
         }
+        return result;
     }
 
     /**
      * import the preList and make it to the model
      */
-    public final void updateModel() {
+    public final void updateModel(List<TopComponent> preList) {
         // prepare the current open items
-        ArrayList<OpenedListItem> tempList = new ArrayList<OpenedListItem>();
+        ArrayList<OpenedListItem> tempList = new ArrayList<>();
         for (TopComponent component : preList) {
             OpenedListItem item = findItem(component);
 
             // new: create a new Item and log its activity
             if (item == null) {
                 item = new OpenedListItem(component);
-                item.logActive();
+                item.logActivation();
             }
-            item.setValid(true);
             tempList.add(item);
         }
 
         // sort by usage 
-        Collections.sort(tempList);
+        Collections.sort(tempList, new Comparator<OpenedListItem>() {
+            @Override
+            public int compare(OpenedListItem o1, OpenedListItem o2) {
+                return (int) (o2.getLastActivation() - o1.getLastActivation());
+            }
+        });
 
-        int mostActive = tempList.size();
-        if (mostActive > 500) {
-            mostActive = 500;
-        }
-
-        // add the first (most active) x items into the current model
-        modelList.clear();
-        for (int t = 0; t < mostActive; t++) {
-            modelList.add(tempList.get(t));
-        }
-
-        // refresh the list of closeable components 
-        closeableList.clear();
-        for (int t = mostActive, len = tempList.size(); t < len; t++) {
-            closeableList.add(tempList.get(t));
+        synchronized(modelList){
+            modelList.clear();
+            modelList.addAll(tempList);
         }
 
         // do some other NO AWT stuff here
     }
 
-    public final TopComponent getSelectedTopComponent() {
-        if (editorMode == null) {
-            editorMode = findEditorMode();
-        }
-
-        if (editorMode != null) {
-            return editorMode.getSelectedTopComponent();
-        }
-
-        return null;
-
-    }
-
-    public final void fireUpdate() {
-        this.fireIntervalAdded(this, 0, modelList.size());
-    }
-
-    public int getSize() {
-        return modelList.size();
-    }
-
-    // no custom renderer method
-    public Object getElementAt(int index) throws IndexOutOfBoundsException {
-        String back = "<error>";
-        try {
-            OpenedListItem item = modelList.get(index);
-            if (item != null) {
-                TopComponent topComp = item.getTopComponent();
-                if (topComp != null) {
-                    back = topComp.getHtmlDisplayName();
-                    if (back == null) {
-                        back = topComp.getDisplayName();
-                        if (back == null) {
-                            back = topComp.getName();
-                            if (back == null) {
-                                back = "unresolved [" + topComp.toString() + "]";
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        return back;
-    }
-
-    /**
-     * returns the Listitem at ofList index <index> or null if something is
-     * wrong...
-     */
-    public OpenedListItem getItem(int index) {
-        OpenedListItem back = null;
-        if (index >= 0) {
-            try {
-                back = modelList.get(index);
-            } catch (Exception e) {
-                back = null;
-            }
-        }
-
-        return back;
+    public final void updateModel() {
+        List<TopComponent> openEditors = this.readOpenedWindows();
+        this.updateModel(openEditors);
     }
 
     public final OpenedListItem findItem(TopComponent topComp) {
@@ -230,8 +165,9 @@ public class OpenFilesModel extends AbstractListModel {
             return null;
         }
 
+        OpenedListItem temp = new OpenedListItem(topComp);
         for (OpenedListItem item : modelList) {
-            if (item.isEqualTopComponent(topComp)) {
+            if (item.equals(temp)) {
                 return item;
             }
         }
@@ -239,7 +175,4 @@ public class OpenFilesModel extends AbstractListModel {
         return null;
     }
 
-    public List<OpenedListItem> getCloseableList() {
-        return closeableList;
-    }
 }

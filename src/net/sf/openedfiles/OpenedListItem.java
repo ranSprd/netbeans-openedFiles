@@ -31,7 +31,6 @@
  * Contributor(s):
  * 
  */
-
 // created by : R.Nagel <kiar@users.sourceforge.net>, 07.03.2008
 //
 // function   : model item (ListModel), contains a single TopComponent
@@ -39,107 +38,61 @@
 // todo       :
 //
 // modified   : 
-
-
 package net.sf.openedfiles;
 
+import java.util.Objects;
 import org.openide.windows.TopComponent;
 
 /**
  * bla
  */
-public class OpenedListItem implements Comparable
-{
-  private TopComponent topComp;
-  private long lastActive = 0;
-  private boolean allowClose = true;
-  private boolean valid = true;
+public class OpenedListItem {
 
-  public OpenedListItem(TopComponent topComp)
-  {
-    this.topComp = topComp;
-  }
+    private TopComponent topComp;
+    private long lastActivation = 0;
 
-  public TopComponent getTopComponent()
-  {
-    return topComp;
-  }
-
-  public void setTopComponent(TopComponent topComp)
-  {
-    this.topComp = topComp;
-  }
-
-  /** check, if there is the same topcomponent */
-  public final boolean isEqualTopComponent(TopComponent other)
-  {
-    if ((other != null) && (topComp != null))
-    {
-      return (other.hashCode() == topComp.hashCode()) ;
-    }
-    
-    return false ;
-  }
-
-
-  /** log activation of this component */
-  public void logActive() {
-    lastActive = System.currentTimeMillis();
-  }
-
-  /** last activation time */
-  public long getLastActive() {
-      return lastActive;
-  }
-
-
-  
-  /** bring the component to the front */
-  public void bringToFront()
-  {
-    if (topComp != null)
-    {
-      if (topComp.isOpened())
-      {
-        topComp.requestActive(); 
-      }
-    }
-  }
-  
-  public boolean isOpen()
-  {
-    if (topComp != null)
-    {
-      return topComp.isOpened() ;
-    }
-    
-    return false ;
-  }
-
-    public boolean isAllowClose() {
-        return allowClose;
+    public OpenedListItem(TopComponent topComp) {
+        this.topComp = topComp;
     }
 
-    public void setAllowClose(boolean allowClose) {
-        this.allowClose = allowClose;
-    }
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
-    public int compareTo(Object o) {
-        if (o == null) {
-            return 1;
-        } else if (o instanceof OpenedListItem) {
-            return (int) ( ((OpenedListItem) o).lastActive - lastActive);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final OpenedListItem other = (OpenedListItem) obj;
+        if (!Objects.equals(this.topComp.hashCode(), other.topComp.hashCode())) {
+            return false;
+        }
+        return true;
+    }
 
-        return 1;
+    public long getLastActivation() {
+        return lastActivation;
+    }
+
+    public TopComponent getTopComponent() {
+        return topComp;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 19 * hash + Objects.hashCode(this.topComp.hashCode());
+        return hash;
+    }
+
+    /**
+     * log activation of this component
+     */
+    public void logActivation() {
+        lastActivation = System.currentTimeMillis();
     }
 
 }
