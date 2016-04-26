@@ -43,13 +43,11 @@ package net.sf.openedfiles;
 import java.util.Objects;
 import org.openide.windows.TopComponent;
 
-/**
- * bla
- */
 public class OpenedListItem {
 
     private TopComponent topComp;
     private long lastActivation = 0;
+    private long useCount = 0;
 
     public OpenedListItem(TopComponent topComp) {
         this.topComp = topComp;
@@ -67,10 +65,7 @@ public class OpenedListItem {
             return false;
         }
         final OpenedListItem other = (OpenedListItem) obj;
-        if (!Objects.equals(this.topComp.hashCode(), other.topComp.hashCode())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.topComp.hashCode(), other.topComp.hashCode());
     }
 
     public long getLastActivation() {
@@ -81,6 +76,10 @@ public class OpenedListItem {
         return topComp;
     }
 
+    public long getUseCount() {
+        return useCount;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -93,6 +92,7 @@ public class OpenedListItem {
      */
     public void logActivation() {
         lastActivation = System.currentTimeMillis();
+        useCount++;
     }
 
 }

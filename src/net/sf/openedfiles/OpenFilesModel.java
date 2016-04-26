@@ -45,7 +45,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import javax.swing.AbstractListModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -55,8 +56,10 @@ import org.openide.windows.WindowManager;
  */
 public class OpenFilesModel {
 
+    private static final Logger logger = Logger.getLogger(OpenFilesModel.class.getName());
+
     // the list which is used for the view
-    private ArrayList<OpenedListItem> modelList = new ArrayList<>();
+    private final ArrayList<OpenedListItem> modelList = new ArrayList<>();
 
     public final Mode findEditorMode() {
         try {
@@ -77,14 +80,14 @@ public class OpenFilesModel {
                     }
                 }
             }
-        } catch (Exception e) // if any error occurs, throws null
-        {
+        } catch (Exception e) {
+            // if any error occurs, throws null
         }
         return null;
     }
 
     public List<TopComponent> getTCs() {
-        List<TopComponent> result = new ArrayList<TopComponent>();
+        List<TopComponent> result = new ArrayList<>();
         for (OpenedListItem item : modelList) {
             result.add(item.getTopComponent());
         }
@@ -101,7 +104,7 @@ public class OpenFilesModel {
     }
 
     public final List<TopComponent> readOpenedWindows() {
-        List<TopComponent> result = new ArrayList<TopComponent>();
+        List<TopComponent> result = new ArrayList<>();
         Mode editorMode = findEditorMode();
         try {
             if (editorMode != null) {
@@ -116,8 +119,7 @@ public class OpenFilesModel {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "unable to read the list of open windows", e);
         }
         return result;
     }
@@ -139,15 +141,15 @@ public class OpenFilesModel {
             tempList.add(item);
         }
 
-        // sort by usage 
+        // sort by last recent usage 
         Collections.sort(tempList, new Comparator<OpenedListItem>() {
-            @Override
-            public int compare(OpenedListItem o1, OpenedListItem o2) {
-                return (int) (o2.getLastActivation() - o1.getLastActivation());
-            }
-        });
+                     @Override
+                     public int compare(OpenedListItem o1, OpenedListItem o2) {
+                         return (int) (o2.getLastActivation() - o1.getLastActivation());
+                     }
+                 });
 
-        synchronized(modelList){
+        synchronized (modelList) {
             modelList.clear();
             modelList.addAll(tempList);
         }
