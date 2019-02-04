@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -62,37 +63,31 @@ public class OpenFilesModel {
     private final ArrayList<OpenedListItem> modelList = new ArrayList<>();
 
     public final Mode findEditorMode() {
+        Mode editorMode = null;
+        
         try {
             // get a set of all available modes
             Set<? extends Mode> modes = WindowManager.getDefault().getModes();
 
             // make it robust
             if (modes != null) {
-                for (Mode mode : modes) {
-                    if (mode != null) {
-                        String dummy = mode.getName();
-                        if (dummy != null) {
-                            // we need only the <editor> mode
-                            if ("editor".equals(dummy)) {
-                                return mode;
-                            }
-                        }
-                    }
+                editorMode = modes.stream()
+                                .filter(mode -> mode != null)
+                                .filter(mode -> "editor".equals( mode.getName()))
+                                .findAny()
+                                .orElse(null);
                 }
-            }
         } catch (Exception e) {
-            // if any error occurs, throws null
+            // if any error occurs, throws nothing
+            editorMode = null;
         }
-        return null;
+        return editorMode;
     }
 
     public List<TopComponent> getTCs() {
-        List<TopComponent> result = new ArrayList<>();
-        for (OpenedListItem item : modelList) {
-            result.add(item.getTopComponent());
-        }
-
-        return result;
+        return modelList.stream()
+                        .map(item -> item.getTopComponent())
+                        .collect( Collectors.toList());
     }
 
     // ----------------------

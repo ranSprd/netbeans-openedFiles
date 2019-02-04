@@ -42,15 +42,12 @@
 package net.sf.openedfiles;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import javax.swing.AbstractAction;
+import java.util.stream.Collectors;
+import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
@@ -58,7 +55,6 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -68,14 +64,19 @@ import org.openide.windows.Mode;
 /**
  * Top component which displays OpenedFiles.
  */
+
+@ConvertAsProperties(
+        dtd = "-//net.sf.openedfiles//OpenFiles//EN",
+        autostore = false
+)
 @TopComponent.Description(
         preferredID = "OpenFilesListTopComponent",
         iconBase="resource/windowlist16.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "net.sf.openedfiles.testerTopComponent")
-@ActionReference(path = "Menu/Window" , position = 333)
+@TopComponent.Registration(mode = "navigator", openAtStartup = false)
+@ActionID(category = "Window", id = "net.sf.openedfiles.OpenFilesListTopComponent")
+@ActionReference(path = "Menu/Window", position = 20750)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_OpenFilesListTopComponent",
         preferredID = "OpenFilesListTopComponent"
@@ -96,17 +97,15 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
 
     private OpenFilesListTopComponent() {
         initComponents();
-        jToolBar1.setVisible(false);
+        
+        // work in progress
+        sortByUsageButton.setVisible(false);
+        
         setName(NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"));
         setToolTipText(NbBundle.getMessage(OpenFilesListTopComponent.class, "HINT_OpenFilesListTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
-        btnManualRefresh.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateModelAndRefreshUI();
-            }
-        });
+        btnManualRefresh.addActionListener( (ActionEvent e) -> updateModelAndRefreshUI());
         
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
 
@@ -114,6 +113,7 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         updateModelAndRefreshUI();
     }
 
+    @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }
@@ -144,53 +144,59 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         jToolBar1 = new javax.swing.JToolBar();
         btnManualRefresh = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        sortByUsageButton = new javax.swing.JToggleButton();
         beanTreeView1 = new org.openide.explorer.view.BeanTreeView();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
+        jToolBar1.setOpaque(false);
 
         btnManualRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/reload.png"))); // NOI18N
         btnManualRefresh.setToolTipText("update view");
+        btnManualRefresh.setFocusable(false);
+        btnManualRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnManualRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(btnManualRefresh);
         jToolBar1.add(jSeparator1);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jToggleButton1, "use");
-        jToggleButton1.setToolTipText("last recent usage");
-        jToggleButton1.setFocusable(false);
-        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jToggleButton1);
+        sortByUsageButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(sortByUsageButton, "use");
+        sortByUsageButton.setToolTipText("last recent usage");
+        sortByUsageButton.setFocusable(false);
+        sortByUsageButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sortByUsageButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(sortByUsageButton);
 
+        beanTreeView1.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
         beanTreeView1.setRootVisible(false);
         beanTreeView1.setUseSubstringInQuickSearch(false);
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jToolBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(beanTreeView1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(beanTreeView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jToolBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(beanTreeView1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE))
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(beanTreeView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -198,8 +204,8 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
     private javax.swing.JButton btnManualRefresh;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToggleButton sortByUsageButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -217,22 +223,17 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         if (modes != null) {
             int size = modes.size();
             if (size > 0) {
-                ArrayList<Mode> back = new ArrayList<Mode>(size);
-                for (Mode single : modes) {
-                    String name = single.getName();
-                    if (name != null) {
-                        // dock everywhere, except editor frame
-                        if (!"editor".equals(name)) {
-                            back.add(single);
-                        }
-                    }
-                }
+                // dock everywhere, except editor frame
+                return modes.stream()
+                        .filter(singleMode -> singleMode.getName() != null && !"editor".equals( singleMode.getName()))
+                        .collect(Collectors.toList());
             }
         }
 
         return null;
     }
     
+    @Override
         public void propertyChange(PropertyChangeEvent evt) {
         if (evt != null) {
             String name = evt.getPropertyName();
@@ -261,4 +262,16 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         em.setRootContext(rootNode);
     }
 
+    void writeProperties(java.util.Properties p) {
+        // better to version settings since initial version as advocated at
+        // http://wiki.apidesign.org/wiki/PropertyFiles
+        p.setProperty("version", "1.0");
+        // TODO store your settings
+    }
+
+    void readProperties(java.util.Properties p) {
+        String version = p.getProperty("version");
+        // TODO read your settings according to their version
+    }
+    
 }

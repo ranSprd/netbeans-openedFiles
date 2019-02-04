@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.openedfiles;
 
 import java.awt.Image;
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Action;
@@ -14,7 +8,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
@@ -25,7 +18,7 @@ import org.openide.windows.TopComponent;
  *
  * @author markiewb
  */
-public class OpenFileNode extends AbstractNode{
+public class OpenFileNode extends AbstractNode {
 
     private static Lookup createLookup(TopComponent tc) {
         final DataObject dataO = getDataObject(tc);
@@ -64,23 +57,35 @@ public class OpenFileNode extends AbstractNode{
         List<Action> actions = new ArrayList<>();
         actions.addAll(Utilities.actionsForPath("OFL/Menus/Popup"));
         
-        DataObject dataObject = getDataObject(context);
-        if (null!=dataObject){
-            
-            Node nodeDelegate = dataObject.getNodeDelegate();
-            if (null!=nodeDelegate){
-                Action[] defaultActions = nodeDelegate.getActions(false);
-                for (Action action : defaultActions) {
-                    actions.add(action);
-                }
-            }
-        }
+        // see also https://netbeans.apache.org/wiki/DevFaqActionsAddAtRuntime.asciidoc
+        actions.addAll(Utilities.actionsForPath("Actions/Window/SelectDocumentNode"));
+        
+//        DataObject dataObject = getDataObject(context);
+//        if (null!=dataObject){
+//            
+//            Node nodeDelegate = dataObject.getNodeDelegate();
+//            if (null!=nodeDelegate){
+//                Action[] defaultActions = nodeDelegate.getActions(false);
+//                for (Action action : defaultActions) {
+//                    actions.add(action);
+//                }
+//            }
+//        }
         return actions.toArray(new Action[actions.size()]);
     }
 
     
     @Override
     public String getHtmlDisplayName() {
+//        DataObject dataObject = getDataObject(context);
+//        if (null!=dataObject) {
+//            Node nodeDelegate = dataObject.getNodeDelegate();
+//            if (nodeDelegate != null) {
+//                String back = nodeDelegate.getHtmlDisplayName();
+//                if (back == null || back.isEmpty()) {
+//                }
+//            }
+//        }
 
         String back = context.getHtmlDisplayName();
         if (back == null) {

@@ -45,7 +45,7 @@ import org.openide.windows.TopComponent;
 
 public class OpenedListItem {
 
-    private TopComponent topComp;
+    private final TopComponent topComp;
     private long lastActivation = 0;
     private long useCount = 0;
 
