@@ -41,7 +41,6 @@
 // modified   : 
 package net.sf.openedfiles;
 
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -64,29 +63,23 @@ import org.openide.windows.Mode;
 /**
  * Top component which displays OpenedFiles.
  */
-
 @ConvertAsProperties(
         dtd = "-//net.sf.openedfiles//OpenFiles//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "OpenFilesListTopComponent",
-        iconBase="resource/windowlist16.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+    preferredID = "OpenFilesListTopComponent",
+    iconBase = "resource/windowlist16.png",
+    persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Window", id = "net.sf.openedfiles.OpenFilesListTopComponent")
 @ActionReference(path = "Menu/Window", position = 20750)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_OpenFilesListTopComponent",
-        preferredID = "OpenFilesListTopComponent"
+    displayName = "#CTL_OpenFilesListTopComponent",
+    preferredID = "OpenFilesListTopComponent"
 )
-@NbBundle.Messages({
-    "CTL_OpenFilesListAction=Opened Files",
-    "CTL_OpenFilesListTopComponent=Opened Files",
-    "HINT_OpenFilesListTopComponent=Window contains a collection of Files which are opened in editor"
-})
-public final class OpenFilesListTopComponent extends TopComponent implements ExplorerManager.Provider, PropertyChangeListener {
+public class OpenFilesListTopComponent extends TopComponent implements ExplorerManager.Provider, PropertyChangeListener {
     private final OpenFilesModel model = new OpenFilesModel();
     private final ExplorerManager em = new ExplorerManager();
     /**
@@ -95,18 +88,21 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
     static final String ICON_PATH = "resource/windowlist16.png";
     static final String LARGE_ICON_PATH = "resource/windowlist32.png";
 
+    public static OpenFilesListTopComponent getInstance() {
+        return new OpenFilesListTopComponent();
+    }
+
     private OpenFilesListTopComponent() {
         initComponents();
-        
+
         // work in progress
-        sortByUsageButton.setVisible(false);
-        
+//        sortByUsageButton.setVisible(false);
+//        btnManualRefresh.setVisible(false);
         setName(NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"));
         setToolTipText(NbBundle.getMessage(OpenFilesListTopComponent.class, "HINT_OpenFilesListTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
-        btnManualRefresh.addActionListener( (ActionEvent e) -> updateModelAndRefreshUI());
-        
+//        btnManualRefresh.addActionListener( (ActionEvent e) -> updateModelAndRefreshUI());
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
 
         //initial loading
@@ -120,17 +116,20 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
 
     @Override
     protected void componentClosed() {
-        /** remove a callback into the WindowManager Registry */
+        /**
+         * remove a callback into the WindowManager Registry
+         */
         WindowManager.getDefault().getRegistry().removePropertyChangeListener(this);
     }
 
-
     @Override
     protected void componentOpened() {
-        /** put a callback into the WindowManager Registry */
+        /**
+         * put a callback into the WindowManager Registry
+         */
         WindowManager.getDefault().getRegistry().addPropertyChangeListener(this);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -141,33 +140,9 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jToolBar1 = new javax.swing.JToolBar();
-        btnManualRefresh = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JToolBar.Separator();
-        sortByUsageButton = new javax.swing.JToggleButton();
         beanTreeView1 = new org.openide.explorer.view.BeanTreeView();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
-        jToolBar1.setOpaque(false);
-
-        btnManualRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/reload.png"))); // NOI18N
-        btnManualRefresh.setToolTipText("update view");
-        btnManualRefresh.setFocusable(false);
-        btnManualRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnManualRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnManualRefresh);
-        jToolBar1.add(jSeparator1);
-
-        sortByUsageButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(sortByUsageButton, "use");
-        sortByUsageButton.setToolTipText("last recent usage");
-        sortByUsageButton.setFocusable(false);
-        sortByUsageButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        sortByUsageButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(sortByUsageButton);
 
         beanTreeView1.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
         beanTreeView1.setRootVisible(false);
@@ -178,14 +153,10 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(beanTreeView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(beanTreeView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(beanTreeView1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -201,11 +172,7 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.openide.explorer.view.BeanTreeView beanTreeView1;
-    private javax.swing.JButton btnManualRefresh;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JToggleButton sortByUsageButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -225,18 +192,19 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
             if (size > 0) {
                 // dock everywhere, except editor frame
                 return modes.stream()
-                        .filter(singleMode -> singleMode.getName() != null && !"editor".equals( singleMode.getName()))
+                        .filter(singleMode -> singleMode.getName() != null && !"editor".equals(singleMode.getName()))
                         .collect(Collectors.toList());
             }
         }
 
         return null;
     }
-    
+
     @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(PropertyChangeEvent evt) {
         if (evt != null) {
             String name = evt.getPropertyName();
+
             if (name != null) {
                 if ((name.equals(TopComponent.Registry.PROP_TC_OPENED))
                         || (name.equals(TopComponent.Registry.PROP_TC_CLOSED))) {
@@ -260,6 +228,14 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         Children children = Children.create(new OpenFileNodeFactory(tcs), true);
         Node rootNode = new AbstractNode(children);
         em.setRootContext(rootNode);
+
+        int itemCount = model.readOpenedWindows().size();
+
+        if (itemCount > 0) {
+            setName(String.format("%s (%s)", NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"), itemCount));
+        } else {
+            setName(NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"));
+        }
     }
 
     void writeProperties(java.util.Properties p) {
@@ -273,5 +249,4 @@ public final class OpenFilesListTopComponent extends TopComponent implements Exp
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-    
 }
