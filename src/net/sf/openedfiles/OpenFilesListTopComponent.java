@@ -41,11 +41,18 @@
 // modified   : 
 package net.sf.openedfiles;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -64,8 +71,8 @@ import org.openide.windows.Mode;
  * Top component which displays OpenedFiles.
  */
 @ConvertAsProperties(
-        dtd = "-//net.sf.openedfiles//OpenFiles//EN",
-        autostore = false
+    dtd = "-//net.sf.openedfiles//OpenFiles//EN",
+    autostore = false
 )
 @TopComponent.Description(
     preferredID = "OpenFilesListTopComponent",
@@ -73,8 +80,8 @@ import org.openide.windows.Mode;
     persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
-@ActionID(category = "Window", id = "net.sf.openedfiles.OpenFilesListTopComponent")
-@ActionReference(path = "Menu/Window", position = 20750)
+@ActionID(category = "Window", id = "net.sf.openedfiles.OpenFilesListTopComponent")@
+ActionReference(path = "Menu/Window", position = 20750)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_OpenFilesListTopComponent",
     preferredID = "OpenFilesListTopComponent"
@@ -95,18 +102,80 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
     private OpenFilesListTopComponent() {
         initComponents();
 
-        // work in progress
-//        sortByUsageButton.setVisible(false);
-//        btnManualRefresh.setVisible(false);
         setName(NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"));
         setToolTipText(NbBundle.getMessage(OpenFilesListTopComponent.class, "HINT_OpenFilesListTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
 
-//        btnManualRefresh.addActionListener( (ActionEvent e) -> updateModelAndRefreshUI());
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+
+        floatableToolbarPanel.setVisible(false);
+        
+        beanTreeView.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                // TODO: Show x to close a file from the TopComponent
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                // TODO: Show file on one click not on double, make an option to change the default behaviour
+            }
+        });
+
+        topComponentPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent arg0) {
+                beanTreeLayeredPanel.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+                beanTreeView.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+
+                floatableToolbarPanel.setBounds((topComponentPanel.getWidth() - floatableToolbarPanel.getWidth()) - 2, 1, floatableToolbarPanel.getWidth(), floatableToolbarPanel.getHeight());
+            }
+
+            @Override
+            public void componentShown(ComponentEvent arg0) {
+                beanTreeLayeredPanel.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+                beanTreeView.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+
+                floatableToolbarPanel.setBounds((topComponentPanel.getWidth() - floatableToolbarPanel.getWidth()) - 2, 1, floatableToolbarPanel.getWidth(), floatableToolbarPanel.getHeight());
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent arg0) {
+                beanTreeLayeredPanel.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+                beanTreeView.setBounds(0, 0, topComponentPanel.getWidth(), topComponentPanel.getHeight());
+
+                floatableToolbarPanel.setBounds((topComponentPanel.getWidth() - floatableToolbarPanel.getWidth()) - 2, 1, floatableToolbarPanel.getWidth(), floatableToolbarPanel.getHeight());
+            }
+        });
+        
+        hoverChildrenOfTopComponent(this);
 
         //initial loading
         updateModelAndRefreshUI();
+    }
+
+    private void hoverChildrenOfTopComponent(Container comp) {
+        comp.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent arg0) {
+                floatableToolbarPanel.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent arg0) {
+                if (!OpenFilesListTopComponent.getInstance().contains(arg0.getPoint())) {
+                    floatableToolbarPanel.setVisible(false);
+                }
+            }
+        });
+
+        final Component[] components = comp.getComponents();
+
+        for (Component component : components) {
+            if (component instanceof Container) {
+                hoverChildrenOfTopComponent((Container)component);
+            }
+        }
     }
 
     @Override
@@ -139,40 +208,147 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        beanTreeView1 = new org.openide.explorer.view.BeanTreeView();
+        toolbarButtonGroup = new javax.swing.ButtonGroup();
+        topComponentPanel = new javax.swing.JPanel();
+        beanTreeLayeredPanel = new javax.swing.JLayeredPane();
+        floatableToolbarPanel = new javax.swing.JPanel();
+        floatableToolbar = new javax.swing.JToolBar();
+        sortMostRecentButton = new javax.swing.JToggleButton();
+        sortAscButton = new javax.swing.JToggleButton();
+        sortDescButton = new javax.swing.JToggleButton();
+        reloadFilesButton = new javax.swing.JButton();
+        closeAllTabs = new javax.swing.JButton();
+        beanTreeView = new org.openide.explorer.view.BeanTreeView();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
-        beanTreeView1.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
-        beanTreeView1.setRootVisible(false);
-        beanTreeView1.setUseSubstringInQuickSearch(false);
+        topComponentPanel.setAlignmentX(0.0F);
+        topComponentPanel.setAlignmentY(0.0F);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(beanTreeView1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        floatableToolbarPanel.setAlignmentX(0.0F);
+        floatableToolbarPanel.setAlignmentY(0.0F);
+        floatableToolbarPanel.setMinimumSize(new java.awt.Dimension(122, 40));
+        floatableToolbarPanel.setPreferredSize(new java.awt.Dimension(122, 40));
+
+        floatableToolbar.setRollover(true);
+        floatableToolbar.setAlignmentX(0.0F);
+        floatableToolbar.setAlignmentY(0.0F);
+        floatableToolbar.setBorderPainted(false);
+        floatableToolbar.setMaximumSize(new java.awt.Dimension(122, 40));
+        floatableToolbar.setMinimumSize(new java.awt.Dimension(122, 40));
+        floatableToolbar.setOpaque(false);
+        floatableToolbar.setPreferredSize(new java.awt.Dimension(122, 40));
+
+        toolbarButtonGroup.add(sortMostRecentButton);
+        sortMostRecentButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/sort-recent.png"))); // NOI18N
+        sortMostRecentButton.setSelected(true);
+        sortMostRecentButton.setFocusable(false);
+        sortMostRecentButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sortMostRecentButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        floatableToolbar.add(sortMostRecentButton);
+
+        toolbarButtonGroup.add(sortAscButton);
+        sortAscButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/sort-az.png"))); // NOI18N
+        sortAscButton.setFocusable(false);
+        sortAscButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sortAscButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        floatableToolbar.add(sortAscButton);
+
+        toolbarButtonGroup.add(sortDescButton);
+        sortDescButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/sort-za.png"))); // NOI18N
+        sortDescButton.setFocusable(false);
+        sortDescButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sortDescButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        floatableToolbar.add(sortDescButton);
+
+        reloadFilesButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/reload.png"))); // NOI18N
+        reloadFilesButton.setFocusable(false);
+        reloadFilesButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        reloadFilesButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        floatableToolbar.add(reloadFilesButton);
+
+        org.openide.awt.Mnemonics.setLocalizedText(closeAllTabs, "close");
+        closeAllTabs.setFocusable(false);
+        closeAllTabs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        closeAllTabs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        closeAllTabs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closeAllTabsMouseClicked(evt);
+            }
+        });
+        floatableToolbar.add(closeAllTabs);
+
+        javax.swing.GroupLayout floatableToolbarPanelLayout = new javax.swing.GroupLayout(floatableToolbarPanel);
+        floatableToolbarPanel.setLayout(floatableToolbarPanelLayout);
+        floatableToolbarPanelLayout.setHorizontalGroup(
+            floatableToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(floatableToolbarPanelLayout.createSequentialGroup()
+                .addComponent(floatableToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(beanTreeView1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+        floatableToolbarPanelLayout.setVerticalGroup(
+            floatableToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(floatableToolbarPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(floatableToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        beanTreeLayeredPanel.add(floatableToolbarPanel);
+        floatableToolbarPanel.setBounds(335, 2, 175, 40);
+
+        beanTreeView.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
+        beanTreeView.setAlignmentX(0.0F);
+        beanTreeView.setAlignmentY(0.0F);
+        beanTreeView.setMinimumSize(new java.awt.Dimension(18, 32));
+        beanTreeView.setRootVisible(false);
+        beanTreeView.setUseSubstringInQuickSearch(false);
+        beanTreeLayeredPanel.add(beanTreeView);
+        beanTreeView.setBounds(0, 0, 514, 422);
+
+        javax.swing.GroupLayout topComponentPanelLayout = new javax.swing.GroupLayout(topComponentPanel);
+        topComponentPanel.setLayout(topComponentPanelLayout);
+        topComponentPanelLayout.setHorizontalGroup(
+            topComponentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(beanTreeLayeredPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+        );
+        topComponentPanelLayout.setVerticalGroup(
+            topComponentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(beanTreeLayeredPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(topComponentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(topComponentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void closeAllTabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeAllTabsMouseClicked
+        final Collection<TopComponent> tcs = model.getTCs();
+        
+        tcs.forEach((TopComponent tc) -> tc.close());
+        
+        model.updateModel();
+    }//GEN-LAST:event_closeAllTabsMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.openide.explorer.view.BeanTreeView beanTreeView1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLayeredPane beanTreeLayeredPanel;
+    private org.openide.explorer.view.BeanTreeView beanTreeView;
+    private javax.swing.JButton closeAllTabs;
+    private javax.swing.JToolBar floatableToolbar;
+    private javax.swing.JPanel floatableToolbarPanel;
+    private javax.swing.JButton reloadFilesButton;
+    private javax.swing.JToggleButton sortAscButton;
+    private javax.swing.JToggleButton sortDescButton;
+    private javax.swing.JToggleButton sortMostRecentButton;
+    private javax.swing.ButtonGroup toolbarButtonGroup;
+    private javax.swing.JPanel topComponentPanel;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -204,7 +380,6 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt != null) {
             String name = evt.getPropertyName();
-
             if (name != null) {
                 if ((name.equals(TopComponent.Registry.PROP_TC_OPENED))
                         || (name.equals(TopComponent.Registry.PROP_TC_CLOSED))) {
@@ -228,14 +403,6 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
         Children children = Children.create(new OpenFileNodeFactory(tcs), true);
         Node rootNode = new AbstractNode(children);
         em.setRootContext(rootNode);
-
-        int itemCount = model.readOpenedWindows().size();
-
-        if (itemCount > 0) {
-            setName(String.format("%s (%s)", NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"), itemCount));
-        } else {
-            setName(NbBundle.getMessage(OpenFilesListTopComponent.class, "CTL_OpenFilesListTopComponent"));
-        }
     }
 
     void writeProperties(java.util.Properties p) {

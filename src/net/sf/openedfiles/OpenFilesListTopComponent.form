@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.3" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.9" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="toolbarButtonGroup">
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
       <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -23,42 +27,186 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+          <Component id="topComponentPanel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+          <Component id="topComponentPanel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="topComponentPanel">
+      <Properties>
+        <Property name="alignmentX" type="float" value="0.0"/>
+        <Property name="alignmentY" type="float" value="0.0"/>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="beanTreeView1" max="32767" attributes="0"/>
+              <Component id="beanTreeLayeredPanel" alignment="0" pref="514" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="beanTreeView1" alignment="1" pref="448" max="32767" attributes="0"/>
+              <Component id="beanTreeLayeredPanel" alignment="0" pref="422" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="org.openide.explorer.view.BeanTreeView" name="beanTreeView1">
-          <Properties>
-            <Property name="viewportBorder" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                <EtchetBorder/>
-              </Border>
-            </Property>
-            <Property name="rootVisible" type="boolean" value="false"/>
-            <Property name="useSubstringInQuickSearch" type="boolean" value="false"/>
-          </Properties>
-        </Component>
+        <Container class="javax.swing.JLayeredPane" name="beanTreeLayeredPanel">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+            <Property name="useNullLayout" type="boolean" value="true"/>
+          </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JPanel" name="floatableToolbarPanel">
+              <Properties>
+                <Property name="alignmentX" type="float" value="0.0"/>
+                <Property name="alignmentY" type="float" value="0.0"/>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[122, 40]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[122, 40]"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="335" y="2" width="175" height="40"/>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="floatableToolbar" min="-2" pref="175" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="floatableToolbar" min="-2" pref="40" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JToolBar" name="floatableToolbar">
+                  <Properties>
+                    <Property name="rollover" type="boolean" value="true"/>
+                    <Property name="alignmentX" type="float" value="0.0"/>
+                    <Property name="alignmentY" type="float" value="0.0"/>
+                    <Property name="borderPainted" type="boolean" value="false"/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[122, 40]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[122, 40]"/>
+                    </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[122, 40]"/>
+                    </Property>
+                  </Properties>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JToggleButton" name="sortMostRecentButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="toolbarButtonGroup"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/resource/sort-recent.png"/>
+                        </Property>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="focusable" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JToggleButton" name="sortAscButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="toolbarButtonGroup"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/resource/sort-az.png"/>
+                        </Property>
+                        <Property name="focusable" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JToggleButton" name="sortDescButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="toolbarButtonGroup"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/resource/sort-za.png"/>
+                        </Property>
+                        <Property name="focusable" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="reloadFilesButton">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/resource/reload.png"/>
+                        </Property>
+                        <Property name="focusable" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="closeAllTabs">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="close"/>
+                        <Property name="focusable" type="boolean" value="false"/>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                        <Property name="verticalTextPosition" type="int" value="3"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="closeAllTabsMouseClicked"/>
+                      </Events>
+                    </Component>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Component class="org.openide.explorer.view.BeanTreeView" name="beanTreeView">
+              <Properties>
+                <Property name="viewportBorder" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                    <EtchetBorder/>
+                  </Border>
+                </Property>
+                <Property name="alignmentX" type="float" value="0.0"/>
+                <Property name="alignmentY" type="float" value="0.0"/>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[18, 32]"/>
+                </Property>
+                <Property name="rootVisible" type="boolean" value="false"/>
+                <Property name="useSubstringInQuickSearch" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="0" width="514" height="422"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>
