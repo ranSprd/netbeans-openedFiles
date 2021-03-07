@@ -132,6 +132,9 @@
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                         <Property name="verticalTextPosition" type="int" value="3"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sortMostRecentButtonMouseClicked"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JToggleButton" name="sortAscButton">
                       <Properties>
@@ -145,6 +148,9 @@
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                         <Property name="verticalTextPosition" type="int" value="3"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sortAscButtonMouseClicked"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JToggleButton" name="sortDescButton">
                       <Properties>
@@ -158,6 +164,9 @@
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                         <Property name="verticalTextPosition" type="int" value="3"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sortDescButtonMouseClicked"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="reloadFilesButton">
                       <Properties>
@@ -168,6 +177,9 @@
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                         <Property name="verticalTextPosition" type="int" value="3"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="reloadFilesButtonMouseClicked"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="closeAllTabs">
                       <Properties>

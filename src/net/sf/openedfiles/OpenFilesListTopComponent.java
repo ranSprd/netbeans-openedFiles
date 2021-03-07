@@ -245,6 +245,11 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
         sortMostRecentButton.setFocusable(false);
         sortMostRecentButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sortMostRecentButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        sortMostRecentButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sortMostRecentButtonMouseClicked(evt);
+            }
+        });
         floatableToolbar.add(sortMostRecentButton);
 
         toolbarButtonGroup.add(sortAscButton);
@@ -252,6 +257,11 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
         sortAscButton.setFocusable(false);
         sortAscButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sortAscButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        sortAscButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sortAscButtonMouseClicked(evt);
+            }
+        });
         floatableToolbar.add(sortAscButton);
 
         toolbarButtonGroup.add(sortDescButton);
@@ -259,12 +269,22 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
         sortDescButton.setFocusable(false);
         sortDescButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         sortDescButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        sortDescButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sortDescButtonMouseClicked(evt);
+            }
+        });
         floatableToolbar.add(sortDescButton);
 
         reloadFilesButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/reload.png"))); // NOI18N
         reloadFilesButton.setFocusable(false);
         reloadFilesButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         reloadFilesButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        reloadFilesButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                reloadFilesButtonMouseClicked(evt);
+            }
+        });
         floatableToolbar.add(reloadFilesButton);
 
         org.openide.awt.Mnemonics.setLocalizedText(closeAllTabs, "close");
@@ -328,14 +348,33 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
             .addComponent(topComponentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    private String sortBy = "";
     private void closeAllTabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeAllTabsMouseClicked
         final Collection<TopComponent> tcs = model.getTCs();
         
         tcs.forEach((TopComponent tc) -> tc.close());
         
-        model.updateModel();
+        model.updateModel(sortBy);
     }//GEN-LAST:event_closeAllTabsMouseClicked
+
+    private void reloadFilesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reloadFilesButtonMouseClicked
+        updateModelAndRefreshUI();
+    }//GEN-LAST:event_reloadFilesButtonMouseClicked
+
+    private void sortAscButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sortAscButtonMouseClicked
+        sortBy = "ASC";
+        updateModelAndRefreshUI();
+    }//GEN-LAST:event_sortAscButtonMouseClicked
+
+    private void sortDescButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sortDescButtonMouseClicked
+        sortBy = "DESC";
+        updateModelAndRefreshUI();
+    }//GEN-LAST:event_sortDescButtonMouseClicked
+
+    private void sortMostRecentButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sortMostRecentButtonMouseClicked
+        sortBy = "";
+        updateModelAndRefreshUI();
+    }//GEN-LAST:event_sortMostRecentButtonMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane beanTreeLayeredPanel;
@@ -380,12 +419,14 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt != null) {
             String name = evt.getPropertyName();
+
             if (name != null) {
                 if ((name.equals(TopComponent.Registry.PROP_TC_OPENED))
                         || (name.equals(TopComponent.Registry.PROP_TC_CLOSED))) {
                     updateModelAndRefreshUI();
                 } else if (name.equals(TopComponent.Registry.PROP_ACTIVATED)) {
                     final Object sender = evt.getNewValue();
+
                     if (sender instanceof TopComponent) {
                         model.logActivation((TopComponent) sender);
                         //FIXME mark the selected TC
@@ -396,7 +437,7 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
     }
 
     private void updateModelAndRefreshUI() {
-        model.updateModel();
+        model.updateModel(sortBy);
 
         final Collection<TopComponent> tcs = model.getTCs();
 

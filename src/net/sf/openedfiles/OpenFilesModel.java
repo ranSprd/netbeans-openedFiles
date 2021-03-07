@@ -43,11 +43,13 @@ package net.sf.openedfiles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -121,11 +123,15 @@ public class OpenFilesModel {
 
     /**
      * import the preList and make it to the model
+     * @param preList
+     * @param sortBy
      */
-    public final void updateModel(List<TopComponent> preList) {
+    public final void updateModel(List<TopComponent> preList, String sortBy) {
         // prepare the current open items
         ArrayList<OpenedListItem> tempList = new ArrayList<>();
-        for (TopComponent component : preList) {
+
+        for (Iterator<TopComponent> it = preList.iterator(); it.hasNext();) {
+            TopComponent component = it.next();
             OpenedListItem item = findItem(component);
 
             // new: create a new Item and log its activity
@@ -133,16 +139,22 @@ public class OpenFilesModel {
                 item = new OpenedListItem(component);
                 item.logActivation();
             }
+
             tempList.add(item);
         }
 
-        // sort by last recent usage 
-        Collections.sort(tempList, new Comparator<OpenedListItem>() {
-                     @Override
-                     public int compare(OpenedListItem o1, OpenedListItem o2) {
-                         return (int) (o2.getLastActivation() - o1.getLastActivation());
-                     }
-                 });
+        switch(sortBy) {
+            case "ASC":
+                sortByASC(tempList);
+            break;
+            case "DESC":
+                sortByDESC(tempList);
+            break;
+            default:
+                sortByLastRecentUsage(tempList);
+            break;
+        }
+       
 
         synchronized (modelList) {
             modelList.clear();
@@ -152,9 +164,40 @@ public class OpenFilesModel {
         // do some other NO AWT stuff here
     }
 
-    public final void updateModel() {
+    private void sortByLastRecentUsage(ArrayList<OpenedListItem> tempList) {
+        // sort by last recent usage
+        Collections.sort(tempList, new Comparator<OpenedListItem>() {
+            @Override
+            public int compare(OpenedListItem o1, OpenedListItem o2) {
+                return (int) (o2.getLastActivation() - o1.getLastActivation());
+            }
+        });
+    }
+
+    private void sortByASC(ArrayList<OpenedListItem> tempList) {
+        // sort by last recent usage
+        Collections.sort(tempList, new Comparator<OpenedListItem>() {
+            @Override
+            public int compare(OpenedListItem o1, OpenedListItem o2) {
+                return (int) (o1.getTopComponent().getName().compareTo(o2.getTopComponent().getName()));
+            }
+            
+        });
+    }
+
+    private void sortByDESC(ArrayList<OpenedListItem> tempList) {
+        // sort by last recent usage
+        Collections.sort(tempList, new Comparator<OpenedListItem>() {
+            @Override
+            public int compare(OpenedListItem o1, OpenedListItem o2) {
+                return (int) (o2.getTopComponent().getName().compareTo(o1.getTopComponent().getName()));
+            }
+        });
+    }
+
+    public final void updateModel(String sortBy) {
         List<TopComponent> openEditors = this.readOpenedWindows();
-        this.updateModel(openEditors);
+        this.updateModel(openEditors, sortBy);
     }
 
     public final OpenedListItem findItem(TopComponent topComp) {
