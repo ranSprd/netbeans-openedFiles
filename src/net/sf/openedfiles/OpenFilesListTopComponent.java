@@ -232,7 +232,6 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
 
         floatableToolbar.setRollover(true);
         floatableToolbar.setAlignmentX(0.0F);
-        floatableToolbar.setAlignmentY(0.0F);
         floatableToolbar.setBorderPainted(false);
         floatableToolbar.setMaximumSize(new java.awt.Dimension(122, 40));
         floatableToolbar.setMinimumSize(new java.awt.Dimension(122, 40));
@@ -302,20 +301,17 @@ public class OpenFilesListTopComponent extends TopComponent implements ExplorerM
         floatableToolbarPanel.setLayout(floatableToolbarPanelLayout);
         floatableToolbarPanelLayout.setHorizontalGroup(
             floatableToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(floatableToolbarPanelLayout.createSequentialGroup()
-                .addComponent(floatableToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(floatableToolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
         );
         floatableToolbarPanelLayout.setVerticalGroup(
             floatableToolbarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(floatableToolbarPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(floatableToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, floatableToolbarPanelLayout.createSequentialGroup()
+                .addComponent(floatableToolbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         beanTreeLayeredPanel.add(floatableToolbarPanel);
-        floatableToolbarPanel.setBounds(335, 2, 175, 40);
+        floatableToolbarPanel.setBounds(360, 2, 150, 40);
 
         beanTreeView.setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
         beanTreeView.setAlignmentX(0.0F);
